@@ -1,0 +1,58 @@
+@import './config.scss';
+
+.ant-input-affix-wrapper .ant-input:not(:first-child) {
+  padding-left: 36px;
+}
+.ant-input-affix-wrapper:hover .ant-input:not(.ant-input-disabled) {
+  border-color: #2794b9;
+}
+.ant-input {
+  height: 30px;
+  border: 1px solid #cecece;
+  border-radius: 3px;
+  padding: 5px 5px 5px 10px;
+  font-size: 13px;
+  color: #3b3b3b;
+
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(233, 147, 20, 0.4);
+  }
+}
+.ant-btn {
+  height: 30px;
+  line-height: 30px;
+  border-radius: 3px;
+  vertical-align: top;
+  border-color: #cecece;
+  &.tracking {
+    margin-left: 8px;
+  }
+  span {
+    font-family: inherit;
+    font-weight: inherit;
+    color: inherit;
+  }
+  &.filter-column {
+    i {
+      line-height: 38px;
+    }
+    svg {
+      font-size: 18px;
+    }
+  }
+  &.ant-btn-primary {
+    box-shadow: unset;
+    svg {
+      fill: #fff;
+    }
+    &:hover {
+      color: #fff;
+      svg {
+        fill: #fff;
+      }
+    }
+    &:focus {
+      color: #fff;
+    }
+  }
+}
