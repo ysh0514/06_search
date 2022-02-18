@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
 import { Helmet } from 'react-helmet';
+import { useQuery } from 'react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SearchInput from 'components/SearchInput';
 import { MEDICINE, SEARCH_LIST } from 'constant/costants';
@@ -10,8 +10,8 @@ import './Search.scss';
 export default function Search() {
   const navigate = useNavigate();
   const [sortedProducts, setSortedProducts] = useState<medicineDataProps[]>([]);
-  const location = useLocation();
   const [isRefetching, setIsRefetching] = useState(false);
+  const location = useLocation();
 
   const searchWords: string | null = new URLSearchParams(location.search).get(
     'q'
@@ -41,6 +41,7 @@ export default function Search() {
     if (firstWord === '') return navigate('/');
     setIsRefetching(true);
     if (!searchData) return;
+
     const newAlignedObject = searchData?.sort(
       (a: medicineDataProps, b: medicineDataProps) => {
         let aIndex = a.name.indexOf(spacedWords ? spacedWords : '');
@@ -48,28 +49,39 @@ export default function Search() {
         return bIndex - aIndex;
       }
     );
-    // 양성호가 추가한 로직
 
-    const brandTopResult = [];
-    for (let i = 0; i < newAlignedObject.length; i++) {
-      if (newAlignedObject[i].brand) {
-        brandTopResult.push(newAlignedObject[i]);
-      }
-    }
-    for (let i = 0; i < newAlignedObject.length; i++) {
-      if (!newAlignedObject[i].brand) {
-        brandTopResult.push(newAlignedObject[i]);
-      }
-    }
-
-    // 임보슬 로직 - 일치하는 글자 수대로 나열
     const searchKeyword = decodeURI(location.search).split('=')[1];
-    const matchingKeyword = brandTopResult.reduce(
+    const matchingKeyword = newAlignedObject.reduce(
       (acc: Array<medicineDataProps>, value: medicineDataProps) => {
-        if (value.name.includes(searchKeyword)) {
+        if (!searchKeyword.includes(' ')) {
+          if (!value.brand) {
+            if (value.name.includes(searchKeyword)) {
+              acc.push(value);
+            }
+          } else {
+            if (
+              value.brand.includes(searchKeyword) ||
+              value.name.includes(searchKeyword)
+            ) {
+              acc.push(value);
+            }
+          }
+        } else acc.push(value);
+        return acc;
+      },
+      []
+    );
+
+    const brandTopList = matchingKeyword.reduce(
+      (acc: Array<medicineDataProps>, value: medicineDataProps) => {
+        if (!value.brand) {
           acc.push({
             name: value.name,
-            brand: !value.brand ? '' : value.brand,
+          });
+        } else {
+          acc.unshift({
+            name: value.name,
+            brand: value.brand,
           });
         }
         return acc;
@@ -77,13 +89,11 @@ export default function Search() {
       []
     );
 
-    setSortedProducts(matchingKeyword);
+    setSortedProducts(brandTopList);
     setTimeout(() => {
       setIsRefetching(false);
     }, 400);
   }, [location, searchData, spacedWords]);
-
-  console.log(sortedProducts);
 
   return (
     <div>
@@ -97,16 +107,14 @@ export default function Search() {
           {sortedProducts &&
             firstWord &&
             sortedProducts.map((item, idx) => (
-              <div key={idx} className="listWrapper">
-                <li className="list">
-                  <span className="productName">{item.name} </span>
-                  {item.brand && (
-                    <span className="brandName"> 브랜드 : {item.brand}</span>
-                  )}
-                </li>
-              </div>
+              <li className="list" key={idx}>
+                <span className="productName">{item.name} </span>
+                {item.brand && (
+                  <span className="brandName"> 브랜드 : {item.brand}</span>
+                )}
+              </li>
             ))}
-          {!(sortedProducts.length === 0 && !sortedProducts) && (
+          {(firstWord === '' || sortedProducts.length === 0) && (
             <span>검색 결과가 없습니다</span>
           )}
         </ul>

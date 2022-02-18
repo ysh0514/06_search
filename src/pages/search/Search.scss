@@ -6,25 +6,22 @@
     padding-left: 0px;
     border: 1px solid black;
 
-    .listWrapper {
+    .list {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      list-style-type: none; /* Remove bullets */
+      padding: 10px;
+      height: 100%;
+      border-bottom: 1px solid black;
       height: 50px;
 
-      .list {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        list-style-type: none; /* Remove bullets */
-        padding: 10px;
-        height: 100%;
-        border-bottom: 1px solid black;
+      .productName {
+        font-weight: 600;
+      }
 
-        .productName {
-          font-weight: 600;
-        }
-
-        .brandName {
-          font-size: 14px;
-        }
+      .brandName {
+        font-size: 14px;
       }
     }
   }
