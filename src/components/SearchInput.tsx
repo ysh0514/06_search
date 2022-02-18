@@ -1,11 +1,9 @@
 import { FormEvent, useState } from 'react';
-import { AutoComplete, Input } from 'antd';
-import 'antd/dist/antd.min.css';
-import 'assets/css/AntOverride.scss';
-import 'assets/css/App.scss';
-import { medicineDataProps } from 'api/api';
 import { useNavigate } from 'react-router-dom';
+import { AutoComplete, Input } from 'antd';
+import { medicineDataProps } from 'api/api';
 import { PRODUCT_LIST, SEARCH_URL } from 'constant/costants';
+import 'assets/css/SearchInput.scss';
 
 interface searchInputProps {
   data: medicineDataProps[];
@@ -16,11 +14,8 @@ export default function SearchInput({ data }: searchInputProps) {
   const [text, setText] = useState('');
 
   function onChange(e: string) {
-    // console.log(e);
     setText(e);
   }
-
-  function onSearch(e: string) {}
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -29,13 +24,9 @@ export default function SearchInput({ data }: searchInputProps) {
   }
 
   const formSearchAttr = {
-    placeholder: 'Keyword',
-    onSearch: onSearch,
+    placeholder: '검색어를 입력해주세요.',
     onChange: onChange,
   };
-  // console.log(searchData);
-
-  // 검색결과
 
   return (
     <div className="wrapper-main">

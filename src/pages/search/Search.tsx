@@ -1,14 +1,14 @@
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useQuery } from 'react-query';
 import { getData, getSearchData, medicineDataProps } from 'api/api';
 import SearchInput from 'components/SearchInput';
 import { MEDICINE, SEARCH_LIST } from 'constant/costants';
-import { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
-import { useLocation } from 'react-router-dom';
 
 export default function Search() {
   const [sortedProducts, setSortedProducts] = useState<medicineDataProps[]>([]);
-  const location = useLocation();
   const [isRefetching, setIsRefetching] = useState(false);
+  const location = useLocation();
 
   const searchWords: string | null = new URLSearchParams(location.search).get(
     'q'
@@ -37,6 +37,7 @@ export default function Search() {
   useEffect(() => {
     setIsRefetching(true);
     if (!searchData) return;
+
     const newAlignedObject = searchData?.sort(
       (a: medicineDataProps, b: medicineDataProps) => {
         let aIndex = a.name.indexOf(spacedWords ? spacedWords : '');
@@ -44,33 +45,40 @@ export default function Search() {
         return bIndex - aIndex;
       }
     );
-    // 양성호가 추가한 로직
-
-    const brandTopResult = [];
-    for (let i = 0; i < newAlignedObject.length; i++) {
-      if (newAlignedObject[i].brand) {
-        brandTopResult.push(newAlignedObject[i]);
-      }
-    }
-    for (let i = 0; i < newAlignedObject.length; i++) {
-      if (!newAlignedObject[i].brand) {
-        brandTopResult.push(newAlignedObject[i]);
-      }
-    }
 
     // 임보슬 로직 - 일치하는 글자 수대로 나열
     const searchKeyword = decodeURI(location.search).split('=')[1];
-    const matchingKeyword = brandTopResult.reduce((acc: Array<medicineDataProps>, value: medicineDataProps) => {
-      if (value.name.includes(searchKeyword)) {
+    const matchingKeyword = newAlignedObject.reduce((acc: Array<medicineDataProps>, value: medicineDataProps) => {
+      if (!searchKeyword.includes(' ')) {
+        if (!value.brand) {
+          if (value.name.includes(searchKeyword)) {
+            acc.push(value)
+          }
+        } else {
+          if (value.brand.includes(searchKeyword) || value.name.includes(searchKeyword)) {
+            acc.push(value)
+          }
+        }
+      } else acc.push(value)
+      return acc;
+    }, []);
+
+    // 양성호가 추가한 로직
+    const brandTopList = matchingKeyword.reduce((acc: Array<medicineDataProps>, value: medicineDataProps) => {
+      if (!value.brand) {
         acc.push({
+          name: value.name
+        })
+      } else {
+        acc.unshift({
           name: value.name,
-          brand: !value.brand ? '' : value.brand
-        });
+          brand: value.brand
+        })
       }
       return acc;
     }, []);
 
-    setSortedProducts(matchingKeyword);
+    setSortedProducts(brandTopList);
     setTimeout(() => {
       setIsRefetching(false);
     }, 400);
