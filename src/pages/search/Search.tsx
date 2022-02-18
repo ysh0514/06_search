@@ -1,12 +1,14 @@
-import { getData, getSearchData, medicineDataProps } from 'api/api';
-import SearchInput from 'components/SearchInput';
-import { MEDICINE, SEARCH_LIST } from 'constant/costants';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+import { useLocation, useNavigate } from 'react-router-dom';
+import SearchInput from 'components/SearchInput';
+import { MEDICINE, SEARCH_LIST } from 'constant/costants';
+import { getData, getSearchData, medicineDataProps } from 'api/api';
 import './Search.scss';
 
 export default function Search() {
+  const navigate = useNavigate();
   const [sortedProducts, setSortedProducts] = useState<medicineDataProps[]>([]);
   const location = useLocation();
   const [isRefetching, setIsRefetching] = useState(false);
@@ -36,6 +38,7 @@ export default function Search() {
   );
 
   useEffect(() => {
+    if (firstWord === '') return navigate('/');
     setIsRefetching(true);
     if (!searchData) return;
     const newAlignedObject = searchData?.sort(
@@ -59,18 +62,40 @@ export default function Search() {
       }
     }
 
-    setSortedProducts(brandTopResult);
+    // 임보슬 로직 - 일치하는 글자 수대로 나열
+    const searchKeyword = decodeURI(location.search).split('=')[1];
+    const matchingKeyword = brandTopResult.reduce(
+      (acc: Array<medicineDataProps>, value: medicineDataProps) => {
+        if (value.name.includes(searchKeyword)) {
+          acc.push({
+            name: value.name,
+            brand: !value.brand ? '' : value.brand,
+          });
+        }
+        return acc;
+      },
+      []
+    );
+
+    setSortedProducts(matchingKeyword);
     setTimeout(() => {
       setIsRefetching(false);
     }, 400);
   }, [location, searchData, spacedWords]);
 
+  console.log(sortedProducts);
+
   return (
     <div>
+      <Helmet>
+        <title>에너지 밸런스 | {searchWords}</title>
+      </Helmet>
       <div className="container">
         {allData && <SearchInput data={allData} />}
+
         <ul className="serachResultWrapper">
           {sortedProducts &&
+            firstWord &&
             sortedProducts.map((item, idx) => (
               <div key={idx} className="listWrapper">
                 <li className="list">
@@ -81,6 +106,9 @@ export default function Search() {
                 </li>
               </div>
             ))}
+          {!(sortedProducts.length === 0 && !sortedProducts) && (
+            <span>검색 결과가 없습니다</span>
+          )}
         </ul>
       </div>
     </div>

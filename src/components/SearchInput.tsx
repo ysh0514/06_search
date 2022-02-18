@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import { AutoComplete, Input } from 'antd';
 import 'antd/dist/antd.min.css';
 import 'assets/css/AntOverride.scss';
@@ -14,6 +14,7 @@ interface searchInputProps {
 export default function SearchInput({ data }: searchInputProps) {
   const navigate = useNavigate();
   const [text, setText] = useState('');
+  const textInputRef = useRef<Input>(null);
 
   function onChange(e: string) {
     // console.log(e);
@@ -24,8 +25,11 @@ export default function SearchInput({ data }: searchInputProps) {
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    textInputRef.current?.focus();
+    setTimeout(() => {
+      textInputRef.current?.blur();
+    }, 100);
     navigate(`${SEARCH_URL}?q=${text}`);
-    setText('');
   }
 
   const formSearchAttr = {
@@ -41,8 +45,13 @@ export default function SearchInput({ data }: searchInputProps) {
     <div className="wrapper-main">
       <div className="search-wrapper">
         <form method="get" onSubmit={onSubmit}>
-          <AutoComplete {...formSearchAttr}>
-            <Input.Search list={PRODUCT_LIST} size="large" name="q" />
+          <AutoComplete aria-selected={false} {...formSearchAttr}>
+            <Input.Search
+              ref={textInputRef}
+              list={PRODUCT_LIST}
+              size="large"
+              name="q"
+            />
           </AutoComplete>
           <datalist id={text.length > 0 ? PRODUCT_LIST : ''}>
             {data &&
