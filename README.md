@@ -1,6 +1,6 @@
 ## 배포 주소
 
-<a href="https://swit-korea.herokuapp.com/">배포 사이트</a>
+<a href="https://whispering-journey-42055.herokuapp.com/">배포 사이트</a>
 
 ## 💻 설치 방법
 
@@ -45,4 +45,12 @@ src
 | <img width="auto" src="https://user-images.githubusercontent.com/80146176/153054588-6194940a-a76d-4fde-a164-2efb3989d6e8.png"> | <img width="auto" src="https://user-images.githubusercontent.com/80146176/153054110-d7c4169e-3824-4903-8ca5-fc4aec044055.png"> |
 
 ## 📝 기능
+
+### 일치하는 글자 수대로 나열
+- 입력한 검색어를 포함하는 데이터를 나열해서 보여주는 로직.
+- ex1) 키네네즈비타민' 입력 시 '키즈비타민'을 반드시 포함한 제품들을 출력한다.
+- 키즈비타민
+- 키즈비타민A젤리
+- 키즈비타민C+아연
+- Router 로 URL의 query string에서 검색어를 디코드(decodeURI) 하여 검색어를 추출한 다음, 검색어에 공백 유무를 체크한 뒤 제품정보 객체 배열을 'reduce'함수로 검색어를 포함하는 객체만 저장한다.
 
