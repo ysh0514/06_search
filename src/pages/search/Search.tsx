@@ -1,55 +1,62 @@
-import { getData, getSearchData, medicineDataProps } from 'api';
+import { getData, getSearchData, medicineDataProps } from 'api/api';
 import SearchInput from 'components/SearchInput';
-import React, { useEffect, useState } from 'react';
+import { MEDICINE, SEARCH_LIST } from 'constant/costants';
+import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useLocation } from 'react-router-dom';
 
 export default function Search() {
-  const [sortList, setList] = useState<medicineDataProps[]>([]);
+  const [sortedProducts, setSortedProducts] = useState<medicineDataProps[]>([]);
   const location = useLocation();
-  const [isFetching, setIsFetching] = useState(false);
-  const keyword: any = new URLSearchParams(location.search).get('q');
-  const word: string = keyword
+  const [isRefetching, setIsRefetching] = useState(false);
+
+  const searchWords: string | null = new URLSearchParams(location.search).get(
+    'q'
+  );
+
+  const firstWord: string | undefined = searchWords
     ?.toString()
     .trim()
     .replace(/,/g, ' ')
     .split(' ')[0];
-  const sortKeyword = keyword
+
+  const spacedWords = searchWords
     ?.toString()
     .trim()
     .replace(/,/g, ' ')
     .split(' ')[1];
-  const { data: allData } = useQuery<medicineDataProps[]>(
-    ['medicine'],
-    getData
-  );
+
+  const { data: allData } = useQuery<medicineDataProps[]>([MEDICINE], getData);
 
   const { data: searchData } = useQuery<medicineDataProps[]>(
-    ['medicine', 'search'],
-    () => getSearchData(word),
-    { refetchInterval: isFetching ? 100 : 0 }
+    [MEDICINE, SEARCH_LIST],
+    () => getSearchData(firstWord ? firstWord : ''),
+    { refetchInterval: isRefetching ? 100 : 0 }
   );
+
   useEffect(() => {
-    setIsFetching(true);
+    setIsRefetching(true);
     if (!searchData) return;
-    const Alt = searchData?.sort((a: any, b: any) => {
-      let aIndex = a.name.indexOf(sortKeyword);
-      let bIndex = b.name.indexOf(sortKeyword);
-      return bIndex - aIndex;
-    });
-    setList(Alt);
+    const newAlignedObject = searchData?.sort(
+      (a: medicineDataProps, b: medicineDataProps) => {
+        let aIndex = a.name.indexOf(spacedWords ? spacedWords : '');
+        let bIndex = b.name.indexOf(spacedWords ? spacedWords : '');
+        return bIndex - aIndex;
+      }
+    );
+    setSortedProducts(newAlignedObject);
     setTimeout(() => {
-      setIsFetching(false);
+      setIsRefetching(false);
     }, 400);
-  }, [location, searchData]);
+  }, [location, searchData, spacedWords]);
 
   return (
     <div>
       {allData && <SearchInput data={allData} />}
       Search
       <ul>
-        {sortList &&
-          sortList.map((item, idx) => (
+        {sortedProducts &&
+          sortedProducts.map((item, idx) => (
             <div key={idx}>
               <li>제품명 :{item.name}</li>
               {item.brand && <li>브랜드 : {item.brand}</li>}

@@ -1,13 +1,11 @@
-import { getData, medicineDataProps } from 'api';
+import { getData, medicineDataProps } from 'api/api';
 import SearchInput from 'components/SearchInput';
+import { MEDICINE } from 'constant/costants';
 import { useQuery } from 'react-query';
 
 export default function Home() {
   // 검색결과
-  const { isLoading, data } = useQuery<medicineDataProps[]>(
-    ['medicine'],
-    getData
-  );
+  const { data } = useQuery<medicineDataProps[]>([MEDICINE], getData);
 
   return (
     <div>

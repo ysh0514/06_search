@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { AutoComplete, Input } from 'antd';
 import 'antd/dist/antd.min.css';
 import 'assets/css/AntOverride.scss';
 import 'assets/css/App.scss';
-import { useQuery } from 'react-query';
-import { getData, medicineDataProps } from 'api';
+import { medicineDataProps } from 'api/api';
 import { useNavigate } from 'react-router-dom';
+import { PRODUCT_LIST, SEARCH_URL } from 'constant/costants';
 
 interface searchInputProps {
   data: medicineDataProps[];
@@ -15,16 +15,16 @@ export default function SearchInput({ data }: searchInputProps) {
   const navigate = useNavigate();
   const [text, setText] = useState('');
 
-  function onChange(e: any) {
+  function onChange(e: string) {
     // console.log(e);
     setText(e);
   }
 
-  function onSearch(e: any) {}
+  function onSearch(e: string) {}
 
-  function onSubmit(e: any) {
+  function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    navigate(`/search?q=${text}`);
+    navigate(`${SEARCH_URL}?q=${text}`);
     setText('');
   }
 
@@ -32,9 +32,6 @@ export default function SearchInput({ data }: searchInputProps) {
     placeholder: 'Keyword',
     onSearch: onSearch,
     onChange: onChange,
-    value: text,
-    text: text,
-    dropdownMatchSelectWidth: 200,
   };
   // console.log(searchData);
 
@@ -45,15 +42,9 @@ export default function SearchInput({ data }: searchInputProps) {
       <div className="search-wrapper">
         <form method="get" onSubmit={onSubmit}>
           <AutoComplete {...formSearchAttr}>
-            <Input.Search
-              onSubmit={onSubmit}
-              list="keyword"
-              size="large"
-              name="q"
-              value={text}
-            />
+            <Input.Search list={PRODUCT_LIST} size="large" name="q" />
           </AutoComplete>
-          <datalist id={text.length > 0 ? 'keyword' : ''}>
+          <datalist id={text.length > 0 ? PRODUCT_LIST : ''}>
             {data &&
               data?.map((item, idx) => <option key={idx} value={item.name} />)}
           </datalist>
