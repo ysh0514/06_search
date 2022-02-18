@@ -4,6 +4,7 @@ import { MEDICINE, SEARCH_LIST } from 'constant/costants';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useLocation } from 'react-router-dom';
+import './Search.scss';
 
 export default function Search() {
   const [sortedProducts, setSortedProducts] = useState<medicineDataProps[]>([]);
@@ -66,21 +67,22 @@ export default function Search() {
 
   return (
     <div>
-      {allData && <SearchInput data={allData} />}
-      Search
-      <ul>
-        {sortedProducts &&
-          sortedProducts.map((item, idx) => (
-            <div key={idx}>
-              <li>
-                <span>
-                  제품명 :{item.name}{' '}
-                  {item.brand && <span> / 브랜드 : {item.brand}</span>}
-                </span>
-              </li>
-            </div>
-          ))}
-      </ul>
+      <div className="container">
+        {allData && <SearchInput data={allData} />}
+        <ul className="serachResultWrapper">
+          {sortedProducts &&
+            sortedProducts.map((item, idx) => (
+              <div key={idx} className="listWrapper">
+                <li className="list">
+                  <span className="productName">{item.name} </span>
+                  {item.brand && (
+                    <span className="brandName"> 브랜드 : {item.brand}</span>
+                  )}
+                </li>
+              </div>
+            ))}
+        </ul>
+      </div>
     </div>
   );
 }
