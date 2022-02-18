@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import { useQuery } from 'react-query';
-import { getData, getSearchData, medicineDataProps } from 'api/api';
+import { useLocation, useNavigate } from 'react-router-dom';
 import SearchInput from 'components/SearchInput';
 import { MEDICINE, SEARCH_LIST } from 'constant/costants';
+import { getData, getSearchData, medicineDataProps } from 'api/api';
 
 export default function Search() {
+  const navigate = useNavigate();
   const [sortedProducts, setSortedProducts] = useState<medicineDataProps[]>([]);
   const [isRefetching, setIsRefetching] = useState(false);
   const location = useLocation();
@@ -35,6 +37,7 @@ export default function Search() {
   );
 
   useEffect(() => {
+    if (firstWord === '') return navigate('/');
     setIsRefetching(true);
     if (!searchData) return;
 
@@ -86,21 +89,30 @@ export default function Search() {
 
   return (
     <div>
-      {allData && <SearchInput data={allData} />}
-      Search
-      <ul>
-        {sortedProducts &&
-          sortedProducts.map((item, idx) => (
-            <div key={idx}>
-              <li>
-                <span>
-                  제품명 :{item.name}{' '}
-                  {item.brand && <span> / 브랜드 : {item.brand}</span>}
-                </span>
-              </li>
-            </div>
-          ))}
-      </ul>
+      <Helmet>
+        <title>에너지 밸런스 | {searchWords}</title>
+      </Helmet>
+      <div>
+        {allData && <SearchInput data={allData} />}
+        Search
+        <ul>
+          {sortedProducts &&
+            firstWord &&
+            sortedProducts.map((item, idx) => (
+              <div key={idx}>
+                <li>
+                  <span>
+                    제품명 :{item.name}{' '}
+                    {item.brand && <span> / 브랜드 : {item.brand}</span>}
+                  </span>
+                </li>
+              </div>
+            ))}
+          {!(sortedProducts.length === 0 && !sortedProducts) && (
+            <span>검색 결과가 없습니다</span>
+          )}
+        </ul>
+      </div>
     </div>
   );
 }
