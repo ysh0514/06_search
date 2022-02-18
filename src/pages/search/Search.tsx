@@ -37,7 +37,7 @@ export default function Search() {
   useEffect(() => {
     setIsRefetching(true);
     if (!searchData) return;
-    const newAlignedObject: any = searchData?.sort(
+    const newAlignedObject = searchData?.sort(
       (a: medicineDataProps, b: medicineDataProps) => {
         let aIndex = a.name.indexOf(spacedWords ? spacedWords : '');
         let bIndex = b.name.indexOf(spacedWords ? spacedWords : '');
