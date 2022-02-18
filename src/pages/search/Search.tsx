@@ -16,6 +16,9 @@ export default function Search() {
   const searchWords: string | null = new URLSearchParams(location.search).get(
     'q'
   );
+  const searchCategory: string | null = new URLSearchParams(
+    location.search
+  ).get('category');
 
   const firstWord: string | undefined = searchWords
     ?.toString()
@@ -49,8 +52,9 @@ export default function Search() {
         return bIndex - aIndex;
       }
     );
-
-    const searchKeyword = decodeURI(location.search).split('=')[1];
+    const searchKeyword = decodeURI(location.search)
+      .split('=')[1]
+      .split('&')[0];
     const matchingKeyword = newAlignedObject.reduce(
       (acc: Array<medicineDataProps>, value: medicineDataProps) => {
         if (!searchKeyword.includes(' ')) {
@@ -71,7 +75,6 @@ export default function Search() {
       },
       []
     );
-
     const brandTopList = matchingKeyword.reduce(
       (acc: Array<medicineDataProps>, value: medicineDataProps) => {
         if (!value.brand) {
@@ -88,12 +91,36 @@ export default function Search() {
       },
       []
     );
-
-    setSortedProducts(brandTopList);
+    const newArray: medicineDataProps[] = [];
+    if (searchCategory === '전체') {
+      setSortedProducts(brandTopList);
+    } else if (searchCategory === '제품') {
+      brandTopList.map((item, idx) => {
+        if (
+          (item.brand && item.brand.length === 0) ||
+          item.name.includes(firstWord ? firstWord : '') === true
+        ) {
+          return newArray.push(item);
+        }
+      });
+      setSortedProducts(newArray);
+    } else if (searchCategory === '브랜드') {
+      //브랜드의 이름과 입력한 텍스트가 같지 않은 모든 요소는 삭제한다 if(브랜드 이름 !== 입력한 텍스트){삭제}
+      brandTopList.map((item, idx) => {
+        if (
+          item.brand &&
+          item.brand?.includes(firstWord ? firstWord : '') === true
+        ) {
+          return newArray.push(item);
+        }
+      });
+      setSortedProducts(newArray);
+    }
     setTimeout(() => {
       setIsRefetching(false);
     }, 400);
   }, [location, searchData, spacedWords]);
+  // console.log('코드 고치기전 함 되는지만 : ', sortedProducts);
 
   return (
     <div>
