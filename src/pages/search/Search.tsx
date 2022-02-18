@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import SearchInput from 'components/SearchInput';
 import { MEDICINE, SEARCH_LIST } from 'constant/costants';
 import { getData, getSearchData, medicineDataProps } from 'api/api';
+import './Search.scss';
 
 export default function Search() {
   const navigate = useNavigate();
@@ -49,37 +50,44 @@ export default function Search() {
       }
     );
 
-    // 임보슬 로직 - 일치하는 글자 수대로 나열
     const searchKeyword = decodeURI(location.search).split('=')[1];
-    const matchingKeyword = newAlignedObject.reduce((acc: Array<medicineDataProps>, value: medicineDataProps) => {
-      if (!searchKeyword.includes(' ')) {
-        if (!value.brand) {
-          if (value.name.includes(searchKeyword)) {
-            acc.push(value)
+    const matchingKeyword = newAlignedObject.reduce(
+      (acc: Array<medicineDataProps>, value: medicineDataProps) => {
+        if (!searchKeyword.includes(' ')) {
+          if (!value.brand) {
+            if (value.name.includes(searchKeyword)) {
+              acc.push(value);
+            }
+          } else {
+            if (
+              value.brand.includes(searchKeyword) ||
+              value.name.includes(searchKeyword)
+            ) {
+              acc.push(value);
+            }
           }
-        } else {
-          if (value.brand.includes(searchKeyword) || value.name.includes(searchKeyword)) {
-            acc.push(value)
-          }
-        }
-      } else acc.push(value)
-      return acc;
-    }, []);
+        } else acc.push(value);
+        return acc;
+      },
+      []
+    );
 
-    // 양성호가 추가한 로직
-    const brandTopList = matchingKeyword.reduce((acc: Array<medicineDataProps>, value: medicineDataProps) => {
-      if (!value.brand) {
-        acc.push({
-          name: value.name
-        })
-      } else {
-        acc.unshift({
-          name: value.name,
-          brand: value.brand
-        })
-      }
-      return acc;
-    }, []);
+    const brandTopList = matchingKeyword.reduce(
+      (acc: Array<medicineDataProps>, value: medicineDataProps) => {
+        if (!value.brand) {
+          acc.push({
+            name: value.name,
+          });
+        } else {
+          acc.unshift({
+            name: value.name,
+            brand: value.brand,
+          });
+        }
+        return acc;
+      },
+      []
+    );
 
     setSortedProducts(brandTopList);
     setTimeout(() => {
@@ -92,23 +100,21 @@ export default function Search() {
       <Helmet>
         <title>에너지 밸런스 | {searchWords}</title>
       </Helmet>
-      <div>
+      <div className="container">
         {allData && <SearchInput data={allData} />}
-        Search
-        <ul>
+
+        <ul className="serachResultWrapper">
           {sortedProducts &&
             firstWord &&
             sortedProducts.map((item, idx) => (
-              <div key={idx}>
-                <li>
-                  <span>
-                    제품명 :{item.name}{' '}
-                    {item.brand && <span> / 브랜드 : {item.brand}</span>}
-                  </span>
-                </li>
-              </div>
+              <li className="list" key={idx}>
+                <span className="productName">{item.name} </span>
+                {item.brand && (
+                  <span className="brandName"> 브랜드 : {item.brand}</span>
+                )}
+              </li>
             ))}
-          {!(sortedProducts.length === 0 && !sortedProducts) && (
+          {(firstWord === '' || sortedProducts.length === 0) && (
             <span>검색 결과가 없습니다</span>
           )}
         </ul>

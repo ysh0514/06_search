@@ -6,9 +6,5 @@ import { MEDICINE } from 'constant/costants';
 export default function Home() {
   const { data } = useQuery<medicineDataProps[]>([MEDICINE], getData);
 
-  return (
-    <div>
-      {data && <SearchInput data={data} />}
-    </div>
-  );
+  return <div>{data && <SearchInput data={data} />}</div>;
 }
