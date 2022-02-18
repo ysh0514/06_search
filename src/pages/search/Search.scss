@@ -15,11 +15,17 @@
       height: 100%;
       border-bottom: 1px solid black;
       height: 50px;
+<<<<<<< HEAD
+      &:last-child {
+        border-bottom: none;
+      }
+=======
 
       &:last-child {
         border-bottom: none;
       }
 
+>>>>>>> 68ad4c07fc4f2fac97e1cd5ef2dd633dd30b69b2
       .productName {
         font-weight: 600;
       }

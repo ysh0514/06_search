@@ -18,7 +18,7 @@ export default function SearchInput({ data }: searchInputProps) {
     setText(e);
   }
 
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  function onSubmit(e: FormEvent<HTMLFormElement> | any) {
     e.preventDefault();
     textInputRef.current?.focus();
     setTimeout(() => {
@@ -37,7 +37,13 @@ export default function SearchInput({ data }: searchInputProps) {
       <div className="search-wrapper">
         <form method="get" onSubmit={onSubmit}>
           <AutoComplete aria-selected={false} {...formSearchAttr}>
-            <Input.Search ref={textInputRef} list={PRODUCT_LIST} name="q" />
+            <Input.Search
+              enterButton
+              onSubmit={onSubmit}
+              ref={textInputRef}
+              list={PRODUCT_LIST}
+              name="q"
+            />
           </AutoComplete>
           <datalist id={text.length > 0 ? PRODUCT_LIST : ''}>
             {data &&
