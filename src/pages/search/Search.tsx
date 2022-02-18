@@ -58,7 +58,19 @@ export default function Search() {
       }
     }
 
-    setSortedProducts(brandTopResult);
+    // 임보슬 로직 - 일치하는 글자 수대로 나열
+    const searchKeyword = decodeURI(location.search).split('=')[1];
+    const matchingKeyword = brandTopResult.reduce((acc: Array<medicineDataProps>, value: medicineDataProps) => {
+      if (value.name.includes(searchKeyword)) {
+        acc.push({
+          name: value.name,
+          brand: !value.brand ? '' : value.brand
+        });
+      }
+      return acc;
+    }, []);
+
+    setSortedProducts(matchingKeyword);
     setTimeout(() => {
       setIsRefetching(false);
     }, 400);
