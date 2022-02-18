@@ -44,7 +44,21 @@ export default function Search() {
         return bIndex - aIndex;
       }
     );
-    setSortedProducts(newAlignedObject);
+    // 양성호가 추가한 로직
+
+    const brandTopResult = [];
+    for (let i = 0; i < newAlignedObject.length; i++) {
+      if (newAlignedObject[i].brand) {
+        brandTopResult.push(newAlignedObject[i]);
+      }
+    }
+    for (let i = 0; i < newAlignedObject.length; i++) {
+      if (!newAlignedObject[i].brand) {
+        brandTopResult.push(newAlignedObject[i]);
+      }
+    }
+
+    setSortedProducts(brandTopResult);
     setTimeout(() => {
       setIsRefetching(false);
     }, 400);
@@ -58,8 +72,12 @@ export default function Search() {
         {sortedProducts &&
           sortedProducts.map((item, idx) => (
             <div key={idx}>
-              <li>제품명 :{item.name}</li>
-              {item.brand && <li>브랜드 : {item.brand}</li>}
+              <li>
+                <span>
+                  제품명 :{item.name}{' '}
+                  {item.brand && <span> / 브랜드 : {item.brand}</span>}
+                </span>
+              </li>
             </div>
           ))}
       </ul>
