@@ -3,11 +3,11 @@ export interface medicineDataProps {
   brand?: string;
 }
 
+const BASE_URL = 'https://whispering-journey-42055.herokuapp.com/medicine';
+
 export const getData = () => {
-  return fetch('http://localhost:4000/medicine').then((res) => res.json());
+  return fetch(BASE_URL).then((res) => res.json());
 };
 export const getSearchData = (text: string) => {
-  return fetch(`http://localhost:4000/medicine?q=${text}`).then((res) =>
-    res.json()
-  );
+  return fetch(`${BASE_URL}?q=${text}`).then((res) => res.json());
 };
