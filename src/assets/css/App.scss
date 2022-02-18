@@ -1,0 +1,25 @@
+@import './config.scss';
+
+html,
+body,
+#root,
+.wrapper-main {
+  width: 100%;
+  overflow: hidden;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+.wrapper-main {
+  z-index: 1;
+  height: 100%;
+
+  .search-wrapper {
+    width: 200px;
+  }
+}
