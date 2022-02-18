@@ -15,7 +15,9 @@
       height: 100%;
       border-bottom: 1px solid black;
       height: 50px;
-
+      &:last-child {
+        border-bottom: none;
+      }
       .productName {
         font-weight: 600;
       }
