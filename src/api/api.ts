@@ -9,5 +9,5 @@ export const getData = () => {
   return fetch(BASE_URL).then((res) => res.json());
 };
 export const getSearchData = (text: string) => {
-  return fetch(`${BASE_URL}?q=${text}`).then((res) => res.json());
+  return fetch(`${BASE_URL}/?q=${text}`).then((res) => res.json());
 };

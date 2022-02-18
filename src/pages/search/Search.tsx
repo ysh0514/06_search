@@ -70,6 +70,7 @@ export default function Search() {
       Search
       <ul>
         {sortedProducts &&
+          firstWord &&
           sortedProducts.map((item, idx) => (
             <div key={idx}>
               <li>
@@ -80,6 +81,9 @@ export default function Search() {
               </li>
             </div>
           ))}
+        {!(sortedProducts.length === 0 && !sortedProducts) && (
+          <span>검색 결과가 없습니다</span>
+        )}
       </ul>
     </div>
   );
