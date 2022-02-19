@@ -1,18 +1,30 @@
-import { getData, getSearchData, medicineDataProps } from 'api/api';
-import SearchInput from 'components/SearchInput';
-import { MEDICINE, SEARCH_LIST } from 'constant/costants';
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { useQuery } from 'react-query';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import SearchInput from 'components/SearchInput';
+import {
+  CATEGORY_ALL,
+  CATEGORY_BRAND,
+  CATEGORY_PRODUCT,
+  MEDICINE,
+  SEARCH_LIST,
+} from 'constant/costants';
+import { getData, getSearchData, medicineDataProps } from 'api/api';
+import './Search.scss';
 
 export default function Search() {
+  const navigate = useNavigate();
   const [sortedProducts, setSortedProducts] = useState<medicineDataProps[]>([]);
-  const location = useLocation();
   const [isRefetching, setIsRefetching] = useState(false);
+  const location = useLocation();
 
   const searchWords: string | null = new URLSearchParams(location.search).get(
     'q'
   );
+  const searchCategory: string | null = new URLSearchParams(
+    location.search
+  ).get('category');
 
   const firstWord: string | undefined = searchWords
     ?.toString()
@@ -35,8 +47,10 @@ export default function Search() {
   );
 
   useEffect(() => {
+    if (firstWord === '') return navigate('/');
     setIsRefetching(true);
     if (!searchData) return;
+
     const newAlignedObject = searchData?.sort(
       (a: medicineDataProps, b: medicineDataProps) => {
         let aIndex = a.name.indexOf(spacedWords ? spacedWords : '');
@@ -44,47 +58,100 @@ export default function Search() {
         return bIndex - aIndex;
       }
     );
-    // 양성호가 추가한 로직
-
-    const brandTopResult = [];
-    for (let i = 0; i < newAlignedObject.length; i++) {
-      if (newAlignedObject[i].brand) {
-        brandTopResult.push(newAlignedObject[i]);
-      }
+    const searchKeyword = decodeURI(location.search)
+      .split('=')[1]
+      .split('&')[0];
+    const matchingKeyword = newAlignedObject.reduce(
+      (acc: Array<medicineDataProps>, value: medicineDataProps) => {
+        if (!searchKeyword.includes(' ')) {
+          if (!value.brand) {
+            if (value.name.includes(searchKeyword)) {
+              acc.push(value);
+            }
+          } else {
+            if (
+              value.brand.includes(searchKeyword) ||
+              value.name.includes(searchKeyword)
+            ) {
+              acc.push(value);
+            }
+          }
+        } else acc.push(value);
+        return acc;
+      },
+      []
+    );
+    const brandTopList = matchingKeyword.reduce(
+      (acc: Array<medicineDataProps>, value: medicineDataProps) => {
+        if (!value.brand) {
+          acc.push({
+            name: value.name,
+          });
+        } else {
+          acc.unshift({
+            name: value.name,
+            brand: value.brand,
+          });
+        }
+        return acc;
+      },
+      []
+    );
+    const newArray: medicineDataProps[] = [];
+    if (searchCategory === CATEGORY_ALL) {
+      setSortedProducts(brandTopList);
+    } else if (searchCategory === CATEGORY_PRODUCT) {
+      brandTopList.map((item) => {
+        if (
+          (item.brand && item.brand.length === 0) ||
+          item.name.includes(firstWord ? firstWord : '') === true
+        ) {
+          return newArray.push(item);
+        }
+        return null;
+      });
+      setSortedProducts(newArray);
+    } else if (searchCategory === CATEGORY_BRAND) {
+      brandTopList.map((item) => {
+        if (
+          item.brand &&
+          item.brand?.includes(firstWord ? firstWord : '') === true
+        ) {
+          return newArray.push(item);
+        }
+        return null;
+      });
+      setSortedProducts(newArray);
     }
-    for (let i = 0; i < newAlignedObject.length; i++) {
-      if (!newAlignedObject[i].brand) {
-        brandTopResult.push(newAlignedObject[i]);
-      }
-    }
-
-    setSortedProducts(brandTopResult);
     setTimeout(() => {
       setIsRefetching(false);
     }, 400);
-  }, [location, searchData, spacedWords]);
+  }, [location, searchData, spacedWords, firstWord, navigate, searchCategory]);
 
   return (
     <div>
-      {allData && <SearchInput data={allData} />}
-      Search
-      <ul>
-        {sortedProducts &&
-          firstWord &&
-          sortedProducts.map((item, idx) => (
-            <div key={idx}>
-              <li>
-                <span>
-                  제품명 :{item.name}{' '}
-                  {item.brand && <span> / 브랜드 : {item.brand}</span>}
-                </span>
+      <Helmet>
+        <title>에너지 밸런스 | {searchWords}</title>
+      </Helmet>
+      <div className="container">
+        {allData && <SearchInput data={allData} />}
+
+        <ul className="serachResultWrapper">
+          {sortedProducts &&
+            firstWord &&
+            sortedProducts.map((item, idx) => (
+              <li className="list" key={idx}>
+                <span className="productName">{item.name} </span>
+                {item.brand && (
+                  <span className="brandName"> 브랜드 : {item.brand}</span>
+                )}
               </li>
-            </div>
-          ))}
-        {!(sortedProducts.length === 0 && !sortedProducts) && (
-          <span>검색 결과가 없습니다</span>
-        )}
-      </ul>
+            ))}
+          {(firstWord === '' || sortedProducts.length === 0) && (
+            <span>검색 결과가 없습니다</span>
+          )}
+        </ul>
+      </div>
     </div>
   );
 }

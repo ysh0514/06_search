@@ -22,6 +22,7 @@
     "json-server": "^0.17.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-helmet": "^6.1.0",
     "react-query": "^3.34.15",
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.2.1",
@@ -57,6 +58,7 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.16.11",
+    "@types/react-helmet": "^6.1.5",
     "eslint": "^8.7.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
