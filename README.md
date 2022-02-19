@@ -46,8 +46,9 @@ src
 
 ## ✍기능을 구현하기 위해 회의하였던 회의록
 
-<a href="https://www.notion.so/fc2a3ee520da4a6499a274be2e034a56">회의록 주소</a>
+# <a href="https://www.notion.so/fc2a3ee520da4a6499a274be2e034a56">회의록 주소</a>
 
+ <img width="50%" src="https://user-images.githubusercontent.com/80146176/154784321-0de51e71-aae1-4fa2-a3b9-687c0c2e7d79.png">
 
 ## 📝 기능
 
