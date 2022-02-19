@@ -1,6 +1,6 @@
 ## 배포 주소
 
-<a href="https://whispering-journey-42055.herokuapp.com/">배포 사이트</a>
+## <a href="https://whispering-journey-42055.herokuapp.com/">배포 사이트</a>
 
 ## 💻 설치 방법
 
