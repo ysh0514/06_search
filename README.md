@@ -1,3 +1,6 @@
+## 팀원
+[양성호 , 김영길 , 임보슬]
+
 ## 배포 주소
 
 ## <a href="https://whispering-journey-42055.herokuapp.com/">배포 사이트</a>
