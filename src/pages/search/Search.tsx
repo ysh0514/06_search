@@ -3,7 +3,13 @@ import { Helmet } from 'react-helmet';
 import { useQuery } from 'react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SearchInput from 'components/SearchInput';
-import { MEDICINE, SEARCH_LIST } from 'constant/costants';
+import {
+  CATEGORY_ALL,
+  CATEGORY_BRAND,
+  CATEGORY_PRODUCT,
+  MEDICINE,
+  SEARCH_LIST,
+} from 'constant/costants';
 import { getData, getSearchData, medicineDataProps } from 'api/api';
 import './Search.scss';
 
@@ -92,35 +98,35 @@ export default function Search() {
       []
     );
     const newArray: medicineDataProps[] = [];
-    if (searchCategory === '전체') {
+    if (searchCategory === CATEGORY_ALL) {
       setSortedProducts(brandTopList);
-    } else if (searchCategory === '제품') {
-      brandTopList.map((item, idx) => {
+    } else if (searchCategory === CATEGORY_PRODUCT) {
+      brandTopList.map((item) => {
         if (
           (item.brand && item.brand.length === 0) ||
           item.name.includes(firstWord ? firstWord : '') === true
         ) {
           return newArray.push(item);
         }
+        return null;
       });
       setSortedProducts(newArray);
-    } else if (searchCategory === '브랜드') {
-      //브랜드의 이름과 입력한 텍스트가 같지 않은 모든 요소는 삭제한다 if(브랜드 이름 !== 입력한 텍스트){삭제}
-      brandTopList.map((item, idx) => {
+    } else if (searchCategory === CATEGORY_BRAND) {
+      brandTopList.map((item) => {
         if (
           item.brand &&
           item.brand?.includes(firstWord ? firstWord : '') === true
         ) {
           return newArray.push(item);
         }
+        return null;
       });
       setSortedProducts(newArray);
     }
     setTimeout(() => {
       setIsRefetching(false);
     }, 400);
-  }, [location, searchData, spacedWords]);
-  // console.log('코드 고치기전 함 되는지만 : ', sortedProducts);
+  }, [location, searchData, spacedWords, firstWord, navigate, searchCategory]);
 
   return (
     <div>
