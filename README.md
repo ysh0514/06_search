@@ -44,6 +44,11 @@ src
 | 노션에서의 소통                                                                                                                |                                                     화면공유를 활용한 소통                                                     |
 | <img width="auto" src="https://user-images.githubusercontent.com/80146176/153054588-6194940a-a76d-4fde-a164-2efb3989d6e8.png"> | <img width="auto" src="https://user-images.githubusercontent.com/80146176/153054110-d7c4169e-3824-4903-8ca5-fc4aec044055.png"> |
 
+## ✍기능을 구현하기 위해 회의하였던 회의록
+
+<a href="https://www.notion.so/fc2a3ee520da4a6499a274be2e034a56">회의록 주소</a>
+
+
 ## 📝 기능
 
 ### 일치하는 글자 수대로 나열
