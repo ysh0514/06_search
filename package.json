@@ -37,7 +37,9 @@
     "build": "cross-env NODE_PATH=src react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "heroku-postbuild": "cross-env NODE_PATH=src npm run build"
+    "heroku-postbuild": "cross-env NODE_PATH=src npm run build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -62,7 +64,9 @@
     "eslint": "^8.7.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "gh-pages": "^3.2.3",
     "prettier": "^2.5.1",
     "prettier-eslint": "^13.0.0"
-  }
+  },
+  "homepage": "https://Gilpop8663.github.io/06_search"
 }
