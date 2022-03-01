@@ -3,7 +3,7 @@ export interface medicineDataProps {
   brand?: string;
 }
 
-const BASE_URL = 'https://whispering-journey-42055.herokuapp.com/medicine';
+const BASE_URL = 'https://dry-hollows-03672.herokuapp.com/medicine';
 
 export const getData = () => {
   return fetch(BASE_URL).then((res) => res.json());
